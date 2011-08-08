@@ -240,13 +240,6 @@ public class Parser {
 	}
 
 
-
-
-
-
-
-
-
 	public java.util.List<Column> getColumnsForInsert(Insert ins) {
 		java.util.List<Column> col = ins.getColumns();
 		if(col == null){
