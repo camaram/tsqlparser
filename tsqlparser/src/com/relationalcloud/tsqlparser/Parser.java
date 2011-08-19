@@ -10,6 +10,7 @@ import java.util.Vector;
 import java.text.*;
 
 
+import com.relationalcloud.tsqlparser.visitors.ChangeInExpVisitor;
 import com.relationalcloud.tsqlparser.exception.NotImplementedException;
 import com.relationalcloud.tsqlparser.expression.BinaryExpression;
 import com.relationalcloud.tsqlparser.expression.Expression;
@@ -205,6 +206,11 @@ public class Parser {
 	}
 
 
+	public void setInExpressionValues(InExpression ie, ItemsList il){
+		ChangeInExpVisitor cie = new ChangeInExpVisitor();
+		cie.changeInExpression(ie, il);
+	}
+	
 	public ArrayList<InExpression> getAllInExpressions(){
 		ArrayList<InExpression> ret = new ArrayList<InExpression>();
 		computeTableList();
