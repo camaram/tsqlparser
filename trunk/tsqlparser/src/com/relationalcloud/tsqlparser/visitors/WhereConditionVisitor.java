@@ -74,7 +74,8 @@ public class WhereConditionVisitor implements StatementVisitor, SelectVisitor,
   public void visit(SubSelect subSelect) {
     subSelect.getSelectBody().accept(this);
   }
-
+  
+  
   public Expression getWhereCondition(Statement stmt) {
     if (stmt instanceof Select) {
       Select s = (Select) stmt;

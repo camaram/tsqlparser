@@ -19,6 +19,8 @@ import com.relationalcloud.tsqlparser.expression.operators.relational.EqualsTo;
 import com.relationalcloud.tsqlparser.expression.operators.relational.ExpressionList;
 import com.relationalcloud.tsqlparser.expression.operators.relational.InExpression;
 import com.relationalcloud.tsqlparser.expression.operators.relational.ItemsList;
+import com.relationalcloud.tsqlparser.loader.IntegrityConstraint;
+import com.relationalcloud.tsqlparser.loader.PrimaryKey;
 import com.relationalcloud.tsqlparser.loader.Schema;
 import com.relationalcloud.tsqlparser.parser.CCJSqlParser;
 import com.relationalcloud.tsqlparser.parser.ParseException;
@@ -41,6 +43,7 @@ import com.relationalcloud.tsqlparser.visitors.LimitVisitor;
 import com.relationalcloud.tsqlparser.visitors.OrderByVisitor;
 import com.relationalcloud.tsqlparser.visitors.TablesForStatementVisitor;
 import com.relationalcloud.tsqlparser.visitors.ValuesListVisitor;
+import com.relationalcloud.tsqlparser.visitors.WhereConditionForTableVisitor;
 import com.relationalcloud.tsqlparser.visitors.WhereConditionVisitor;
 import com.relationalcloud.tsqlparser.visitors.WhereJoinVisitor;
 
@@ -865,6 +868,88 @@ public class Parser {
 		}
 
 		return i;
+	}
+
+	
+
+	
+	public ArrayList<String> getPrimaryKeyEquivalent() {
+
+		 ArrayList<String> returnVal = new ArrayList<String>();
+		 
+		ArrayList<BinaryExpression> ret = new ArrayList<BinaryExpression>();
+		computeTableList();
+		
+		String output = "SELECT ";
+
+		if (stmt instanceof Insert && ((Insert) stmt).isUseValues()) {
+			Insert ins = (Insert) stmt;
+			java.util.List<Column> col = this.getColumnsForInsert(ins);
+			ItemsList val = ins.getItemsList();
+			ValuesListVisitor vlv = new ValuesListVisitor();
+			java.util.List le = vlv.getListValue(val);
+
+			ins.getTable().setAlias("t");
+			
+			
+			
+			for (int i = 0; i < Math.min(col.size(),le.size()); i++) {
+				EqualsTo b = new EqualsTo();
+				Column c = col.get(i);
+				c.setTable(ins.getTable());
+				b.setLeftExpression(c);
+				b.setRightExpression((Expression) le.get(i));
+
+				ret.add(b);
+			}
+			
+			for(String s:schema.getTable(ins.getTable().getName()).getPrimaryKey())
+				output+= s + ",";
+			output = output.substring(0,output.length()-2);
+			output += " FROM " + ins.getTable() + " WHERE ";
+
+			for (BinaryExpression b : ret) {
+				output += b.getLeftExpression().toString() + "="
+				+ b.getRightExpression().toString() + " AND ";
+			}
+			output = output.substring(0, output.length() - 5);
+			returnVal.add(output);
+			return returnVal;
+		}
+
+		// EXTRACT WHERE CLAUSE IF ANY
+		WhereConditionVisitor v = new WhereConditionVisitor();
+		Expression exp = v.getWhereCondition(stmt);
+
+		
+		
+		for (Table t : tablelist) {
+			output = "SELECT ";
+			
+			for(String s:schema.getTable(t.getName()).getPrimaryKey())
+				output+= s + ",";
+			output = output.substring(0,output.length()-2);
+			output += " FROM " + t.getName();
+
+			if (exp != null) {
+				WhereConditionForTableVisitor v2 = new WhereConditionForTableVisitor();
+				ArrayList<BinaryExpression> exp2 = v2.getWhereForTableCondition(stmt,t.getName());
+				
+				if(exp2 !=null){
+				output += " WHERE ";
+				for(BinaryExpression be:exp2)
+					output+= be.toString() + " AND ";
+				output = output.substring(0, output.length() - 5);
+				}
+			}
+
+			returnVal.add(output);	
+		}
+		
+		
+		
+		return returnVal;
+
 	}
 
 
