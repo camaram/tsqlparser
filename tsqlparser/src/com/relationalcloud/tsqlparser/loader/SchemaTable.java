@@ -1,6 +1,7 @@
 package com.relationalcloud.tsqlparser.loader;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -230,6 +231,15 @@ public class SchemaTable implements Serializable {
 		//FIXME add throws NonExistingColumnException, ConstrainedColumnException
 	}
 
+	public Vector<String> getPrimaryKey(){
+		
+		for(IntegrityConstraint ic:getConstraints())
+			if(ic instanceof PrimaryKey){
+				return ((PrimaryKey) ic).getFields();
+			}
+		return null;
+		
+	}
 	
 	/**
 	 * @param columns the columns to set
