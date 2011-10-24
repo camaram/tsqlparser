@@ -70,6 +70,8 @@ public class Parser {
 
 	public Parser(String schemaname, Schema schema, String sql) throws ParseException {
 
+		
+		
 		this.schema=schema;
 		this.schemaname = schemaname;
 
