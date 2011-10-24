@@ -873,9 +873,9 @@ public class Parser {
 	
 
 	
-	public ArrayList<String> getPrimaryKeyEquivalent() {
+	public HashMap<String,String> getPrimaryKeyEquivalent() {
 
-		 ArrayList<String> returnVal = new ArrayList<String>();
+		HashMap<String,String> returnVal = new HashMap<String,String>();
 		 
 		ArrayList<BinaryExpression> ret = new ArrayList<BinaryExpression>();
 		computeTableList();
@@ -913,7 +913,7 @@ public class Parser {
 				+ b.getRightExpression().toString() + " AND ";
 			}
 			output = output.substring(0, output.length() - 5);
-			returnVal.add(output);
+			returnVal.put(ins.getTable().toString(),output);
 			return returnVal;
 		}
 
@@ -943,7 +943,7 @@ public class Parser {
 				}
 			}
 
-			returnVal.add(output);	
+			returnVal.put(t.getName(),output);	
 		}
 		
 		
