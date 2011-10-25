@@ -908,8 +908,6 @@ public class Parser {
 			
 			String tabname = ins.getTable().getName();
 			
-			System.err.println("TABNAME:" + tabname);
-			
 			tabname = tabname.replaceAll("`", "");
 			
 			if(schema.getTable(tabname).getPrimaryKey()==null)

@@ -76,9 +76,18 @@ public class Column implements Expression, ColumnReference {
 		
 		if(st2.size()==1)
 			table = new Table(st.get(0));
-		else
-			throw new Exception("Column is not present or ambiguous in this schema.");
-		
+		else{
+			String out = "";
+			String out2 = "";
+			for(SchemaTable ss:st)
+				out+= ", " + ss;		
+			
+			for(SchemaTable ss:st2)
+				out2+= ", " + ss;
+					
+			
+			throw new Exception("Column is not present or ambiguous in this schema... st:" + out + " st2:" + out2);
+		}
 		return table;
 		
 	}
