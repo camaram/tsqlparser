@@ -61,13 +61,20 @@ public class Column implements Expression, ColumnReference {
 	 * @return
 	 * @throws Exception 
 	 */
-	public Table getTable(Schema schema) throws Exception {
+	public Table getTable(ArrayList<String> candidates, Schema schema) throws Exception {
 		
 		if(table!=null && table.getName()!=null)
 			return table;
 		
 		ArrayList<SchemaTable> st = schema.getTableByColumn(columnName);
-		if(st.size()==1)
+		ArrayList<SchemaTable> st2 = new ArrayList<SchemaTable>(); 
+		
+		//focus only on the candidates
+		for(SchemaTable s:st)
+			if(candidates!=null && candidates.contains(s.getTableName()))
+				st2.add(s);
+		
+		if(st2.size()==1)
 			table = new Table(st.get(0));
 		else
 			throw new Exception("Column is not present or ambiguous in this schema.");
@@ -141,4 +148,6 @@ public class Column implements Expression, ColumnReference {
 		return test.columnName.equalsIgnoreCase(columnName) && test.table.equals(table); 
 		
 	}
+
+
 }

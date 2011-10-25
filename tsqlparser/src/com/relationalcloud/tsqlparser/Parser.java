@@ -945,7 +945,7 @@ public class Parser {
 			
 			for(String s:sct.getPrimaryKey())
 				output+= s + ",";
-			output = output.substring(0,output.length()-2);
+			output = output.substring(0,output.length()-1);
 			output += " FROM " + t.getName();
 
 			if (exp != null) {
