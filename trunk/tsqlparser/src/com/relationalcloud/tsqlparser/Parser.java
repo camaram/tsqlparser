@@ -22,6 +22,7 @@ import com.relationalcloud.tsqlparser.expression.operators.relational.ItemsList;
 import com.relationalcloud.tsqlparser.loader.IntegrityConstraint;
 import com.relationalcloud.tsqlparser.loader.PrimaryKey;
 import com.relationalcloud.tsqlparser.loader.Schema;
+import com.relationalcloud.tsqlparser.loader.SchemaTable;
 import com.relationalcloud.tsqlparser.parser.CCJSqlParser;
 import com.relationalcloud.tsqlparser.parser.ParseException;
 import com.relationalcloud.tsqlparser.schema.Column;
@@ -913,7 +914,7 @@ public class Parser {
 			
 			for(String s:schema.getTable(tabname).getPrimaryKey())
 				output+= s + ",";
-			output = output.substring(0,output.length()-2);
+			output = output.substring(0,output.length()-1);
 			output += " FROM " + ins.getTable() + " WHERE ";
 
 			for (BinaryExpression b : ret) {
@@ -933,8 +934,10 @@ public class Parser {
 		
 		for (Table t : tablelist) {
 			output = "SELECT ";
+			String tablename = t.getName().replaceAll("`","");
+			SchemaTable sct = schema.getTable(tablename);
 			
-			for(String s:schema.getTable(t.getName()).getPrimaryKey())
+			for(String s:sct.getPrimaryKey())
 				output+= s + ",";
 			output = output.substring(0,output.length()-2);
 			output += " FROM " + t.getName();
