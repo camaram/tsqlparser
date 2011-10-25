@@ -876,7 +876,7 @@ public class Parser {
 	
 
 	
-	public HashMap<String,String> getPrimaryKeyEquivalent() {
+	public HashMap<String,String> getPrimaryKeyEquivalent() throws Exception {
 
 		HashMap<String,String> returnVal = new HashMap<String,String>();
 		 
@@ -912,6 +912,9 @@ public class Parser {
 			
 			tabname = tabname.replaceAll("`", "");
 			
+			if(schema.getTable(tabname).getPrimaryKey()==null)
+				return null;
+			
 			for(String s:schema.getTable(tabname).getPrimaryKey())
 				output+= s + ",";
 			output = output.substring(0,output.length()-1);
@@ -937,6 +940,9 @@ public class Parser {
 			String tablename = t.getName().replaceAll("`","");
 			SchemaTable sct = schema.getTable(tablename);
 			
+			if(sct.getPrimaryKey()==null)
+				return null;
+			
 			for(String s:sct.getPrimaryKey())
 				output+= s + ",";
 			output = output.substring(0,output.length()-2);
@@ -944,7 +950,7 @@ public class Parser {
 
 			if (exp != null) {
 				WhereConditionForTableVisitor v2 = new WhereConditionForTableVisitor();
-				ArrayList<BinaryExpression> exp2 = v2.getWhereForTableCondition(stmt,t.getName());
+				ArrayList<BinaryExpression> exp2 = v2.getWhereForTableCondition(stmt,t.getName(),schema);
 				
 				if(exp2 !=null){
 				output += " WHERE ";

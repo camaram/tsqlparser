@@ -23,8 +23,12 @@
 
 package com.relationalcloud.tsqlparser.schema;
 
+import java.util.ArrayList;
+
 import com.relationalcloud.tsqlparser.expression.Expression;
 import com.relationalcloud.tsqlparser.expression.ExpressionVisitor;
+import com.relationalcloud.tsqlparser.loader.Schema;
+import com.relationalcloud.tsqlparser.loader.SchemaTable;
 import com.relationalcloud.tsqlparser.schema.Table;
 import com.relationalcloud.tsqlparser.statement.select.ColumnReference;
 import com.relationalcloud.tsqlparser.statement.select.ColumnReferenceVisitor;
@@ -38,9 +42,6 @@ public class Column implements Expression, ColumnReference {
 	private String columnName = "";
 	private Table table;
 	
-	public Column() {
-	}
-
 	public Column(Table table, String columnName) {
 		this.table = table;
 		this.columnName=columnName;
@@ -54,6 +55,29 @@ public class Column implements Expression, ColumnReference {
 		return table;
 	}
 
+	/**
+	 * Table for columsn with null Table... reading from schema... 
+	 * @param schema
+	 * @return
+	 * @throws Exception 
+	 */
+	public Table getTable(Schema schema) throws Exception {
+		
+		if(table!=null && table.getName()!=null)
+			return table;
+		
+		ArrayList<SchemaTable> st = schema.getTableByColumn(columnName);
+		if(st.size()==1)
+			table = new Table(st.get(0));
+		else
+			throw new Exception("Column is not present or ambiguous in this schema.");
+		
+		return table;
+		
+	}
+
+	
+	
 	public void setColumnName(String string) {
 		columnName = string;
 	}
