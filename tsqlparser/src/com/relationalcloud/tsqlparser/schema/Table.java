@@ -22,6 +22,7 @@
  
 package com.relationalcloud.tsqlparser.schema;
 
+import com.relationalcloud.tsqlparser.loader.SchemaTable;
 import com.relationalcloud.tsqlparser.parser.ParseException;
 import com.relationalcloud.tsqlparser.schema.datatypes.TimestampDataType;
 import com.relationalcloud.tsqlparser.statement.select.FromItem;
@@ -116,6 +117,10 @@ public class Table implements FromItem {
 		this.name = name;
 	}
 	
+	public Table(SchemaTable schemaTable) {
+		name = schemaTable.getTableName();
+	}
+
 	public String getName() {
 		return name;
 	}

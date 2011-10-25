@@ -2,6 +2,7 @@ package com.relationalcloud.tsqlparser.loader;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -309,6 +310,16 @@ public class Schema implements Serializable, Comparable {
 	 */
 	public Vector<SchemaTable> getTables() {
 			return tables;
+	}
+
+	public ArrayList<SchemaTable> getTableByColumn(String columnName) {
+		
+		ArrayList<SchemaTable> ret = new ArrayList<SchemaTable>();
+		
+		for(SchemaTable s:tables)
+			if(s.hasColumn(columnName))
+				ret.add(s);
+		return ret;
 	}
 
 	
