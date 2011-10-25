@@ -18,6 +18,10 @@ public class WhereConditionForTableVisitor {
 	 * @throws Exception 
 	 */
 	  public ArrayList<BinaryExpression> getWhereForTableCondition(Statement stmt, String tablename,Schema schema) throws Exception {
+		  
+		  tablename = tablename.replaceAll("`","");
+		  
+		  
 		  WhereConditionVisitor v = new WhereConditionVisitor();
 		  Expression e = v.getWhereCondition(stmt);
 		  ExtractSelectionPredicateVisitor ex = new ExtractSelectionPredicateVisitor();
