@@ -19,7 +19,9 @@ public class SimpleTestParser {
       
       //String sql = " INSERT INTO tab VALUES(1,1.27106114500000000e+09,'stringas')";
       //String sql = "CREATE TABLE A (a1 int, a2 varchar(255));";
-    	String sql = "INSERT INTO `revision` (rev_id,rev_page,rev_text_id,rev_comment,rev_minor_edit,rev_user,rev_user_text,rev_timestamp,rev_deleted,rev_len,rev_parent_id) VALUES (NULL,'2483524',182358929,'','0','0',\"10.1.26.116\",\"1110494025\",'0','20278','182356676')";
+      //String sql = "INSERT INTO `revision` (rev_id,rev_page,rev_text_id,rev_comment,rev_minor_edit,rev_user,rev_user_text,rev_timestamp,rev_deleted,rev_len,rev_parent_id) VALUES (NULL,'2483524',182358929,'','0','0',\"10.1.26.116\",\"1110494025\",'0','20278','182356676')";
+    	String sql = "INSERT INTO `tab` VALUES (1,2,3,4);";
+    	
       Schema schema = new Schema(null,"tpcc",null,null,null,null);
       SchemaTable t = new SchemaTable();
       t.setTableName("tab");

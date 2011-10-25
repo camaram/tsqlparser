@@ -16,7 +16,7 @@ public class ParserHacks {
 	  
 	sql = sql.replaceAll("FORCE INDEX\\(PRIMARY\\)", "");
     sql = sql.replaceAll("force index\\(primary\\)", "");
-   
+    
     return sql;
   }
 

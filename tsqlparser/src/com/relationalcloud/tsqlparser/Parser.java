@@ -254,7 +254,7 @@ public class Parser {
 	public java.util.List<Column> getColumnsForInsert(Insert ins) {
 		java.util.List<Column> col = ins.getColumns();
 		if(col == null){
-			String tablename =ins.getTable().getName();
+			String tablename =ins.getTable().getName().replaceAll("`","");
 			com.relationalcloud.tsqlparser.loader.SchemaTable t = schema.getTable(tablename);
 			Vector<String> v = t.getColumns(); 
 			col = new ArrayList<Column>();
@@ -905,7 +905,13 @@ public class Parser {
 				ret.add(b);
 			}
 			
-			for(String s:schema.getTable(ins.getTable().getName()).getPrimaryKey())
+			String tabname = ins.getTable().getName();
+			
+			System.err.println("TABNAME:" + tabname);
+			
+			tabname = tabname.replaceAll("`", "");
+			
+			for(String s:schema.getTable(tabname).getPrimaryKey())
 				output+= s + ",";
 			output = output.substring(0,output.length()-2);
 			output += " FROM " + ins.getTable() + " WHERE ";
