@@ -28,14 +28,19 @@ public class WhereConditionForTableVisitor {
 		  ArrayList<BinaryExpression> retVal = new ArrayList<BinaryExpression>();
 		  
 		  for(BinaryExpression b:be){
+			  
+			  ArrayList<String> list = new ArrayList<String>();
+			  list.add(tablename);
+			  
+
 			  System.out.println(b);
-			  System.out.println(((Column)b.getLeftExpression()).getTable(schema));
+			  System.out.println(((Column)b.getLeftExpression()).getTable((list),schema));
 			  System.out.println(b.getRightExpression());
 			  
 			  if(!((b.getLeftExpression() instanceof Column && 
-			     !(((Column)b.getLeftExpression()).getTable(schema).getName().equals(tablename))) ||
+			     !(((Column)b.getLeftExpression()).getTable(list,schema).getName().equals(tablename))) ||
 			     (b.getRightExpression() instanceof Column && 
-					     !((Column)b.getRightExpression()).getTable(schema).getName().equals(tablename))))
+					     !((Column)b.getRightExpression()).getTable(list,schema).getName().equals(tablename))))
 				  retVal.add(b);
 				  
 		  }
