@@ -924,9 +924,12 @@ public class Parser {
 			output = output.substring(0,output.length()-1);
 			output += " FROM " + ins.getTable() + " WHERE ";
 
+			Vector<String> pk = schema.getTable(tabname).getPrimaryKey();
+			
 			for (BinaryExpression b : ret) {
-				output += b.getLeftExpression().toString() + "="
-				+ b.getRightExpression().toString() + " AND ";
+				if(pk.contains(((Column)b.getLeftExpression()).getColumnName())){
+					output += b.getLeftExpression().toString() + "=" + b.getRightExpression().toString() + " AND ";
+				}
 			}
 			output = output.substring(0, output.length() - 5);
 			returnVal.put(ins.getTable().toString().replaceAll("`",""),output);
