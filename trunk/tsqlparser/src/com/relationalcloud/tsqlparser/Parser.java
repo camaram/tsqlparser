@@ -906,7 +906,7 @@ public class Parser {
 				Expression v = (Expression) le.get(i);
 				
 				if(v instanceof StringValue)
-					v = new StringValue(((StringValue) v).getNotExcapedValue().replaceAll("'", "\'"));
+					v = new StringValue(((StringValue) v).toString().replaceAll("'", "\'"));
 				b.setRightExpression((Expression) v);
 
 				ret.add(b);
