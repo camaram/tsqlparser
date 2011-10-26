@@ -47,6 +47,7 @@ import com.relationalcloud.tsqlparser.visitors.ValuesListVisitor;
 import com.relationalcloud.tsqlparser.visitors.WhereConditionForTableVisitor;
 import com.relationalcloud.tsqlparser.visitors.WhereConditionVisitor;
 import com.relationalcloud.tsqlparser.visitors.WhereJoinVisitor;
+import com.relationalcloud.tsqlparser.expression.StringValue;
 
 /**
  * SQL Parser
@@ -901,7 +902,12 @@ public class Parser {
 				Column c = col.get(i);
 				c.setTable(ins.getTable());
 				b.setLeftExpression(c);
-				b.setRightExpression((Expression) le.get(i));
+				
+				Expression v = (Expression) le.get(i);
+				
+				if(v instanceof StringValue)
+					v = new StringValue(((StringValue) v).getNotExcapedValue().replaceAll("'", "\'"));
+				b.setRightExpression((Expression) v);
 
 				ret.add(b);
 			}
