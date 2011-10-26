@@ -923,7 +923,7 @@ public class Parser {
 				+ b.getRightExpression().toString() + " AND ";
 			}
 			output = output.substring(0, output.length() - 5);
-			returnVal.put(ins.getTable().toString(),output);
+			returnVal.put(ins.getTable().toString().replaceAll("`",""),output);
 			return returnVal;
 		}
 
@@ -958,7 +958,7 @@ public class Parser {
 				}
 			}
 
-			returnVal.put(t.getName(),output);	
+			returnVal.put(t.getName().replaceAll("`",""),output);	
 		}
 		
 		

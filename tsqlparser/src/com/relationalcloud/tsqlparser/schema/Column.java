@@ -63,33 +63,36 @@ public class Column implements Expression, ColumnReference {
 	 */
 	public Table getTable(ArrayList<String> candidates, Schema schema) throws Exception {
 		
-		if(table!=null && table.getName()!=null)
+		if(table!=null && table.getName()!=null &&  candidates!=null && candidates.contains(table.getName().replaceAll("`","")))
 			return table;
 		
 		ArrayList<SchemaTable> st = schema.getTableByColumn(columnName);
 		ArrayList<SchemaTable> st2 = new ArrayList<SchemaTable>(); 
 		
 		//focus only on the candidates
-		for(SchemaTable s:st)
-			if(candidates!=null && candidates.contains(s.getTableName()))
+		for(SchemaTable s:st){
+			for(String tabname:candidates)
+			if(s.getTableName().replaceAll("`","").equals(tabname.replaceAll("`","")))
 				st2.add(s);
+		}
 		
 		if(st2.size()==1)
-			table = new Table(st.get(0));
-		else{
-			String out = "";
-			String out2 = "";
-			for(SchemaTable ss:st)
-				out+= ", " + ss;		
-			
-			for(SchemaTable ss:st2)
-				out2+= ", " + ss;
+			return new Table(st2.get(0));
 					
-			
-			throw new Exception("Column is not present or ambiguous in this schema... st:" + out + " st2:" + out2);
-		}
-		return table;
-		
+		return null;			
+//		else{
+//			String out = "";
+//			String out2 = "";
+//			for(SchemaTable ss:st)
+//				out+= ", " + ss.getTableName();		
+//			
+//			for(SchemaTable ss:st2)
+//				out2+= ", " + ss.getTableName();				
+//			
+//			throw new Exception("Column " +columnName +" is not present or ambiguous in this schema... st:" + out + " st2:" + out2);
+//		}
+//		return table;
+//		
 	}
 
 	
