@@ -2,10 +2,12 @@ package com.relationalcloud.tsqlparser;
 
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 import com.relationalcloud.tsqlparser.Parser;
 import com.relationalcloud.tsqlparser.expression.BinaryExpression;
 import com.relationalcloud.tsqlparser.loader.ForeignKey;
+import com.relationalcloud.tsqlparser.loader.PrimaryKey;
 import com.relationalcloud.tsqlparser.loader.Schema;
 import com.relationalcloud.tsqlparser.loader.SchemaTable;
 import com.relationalcloud.tsqlparser.statement.insert.Insert;
@@ -35,20 +37,28 @@ public class SimpleTestParser {
       t.addColumn("c");
       t.addColumn("d");
       schema.addTable(t);
-    
+      Vector<String> v =new Vector<String>();
+      v.add("c");
+      t.addConstraint(new PrimaryKey("tab",v));
+      
+      
       SchemaTable t2 = new SchemaTable();
       t2.setTableName("tob");
       t2.addColumn("a");
       t2.addColumn("b");
       t2.addColumn("f");
       schema.addTable(t2);
+      Vector<String> v3 =new Vector<String>();
+      v3.add("a");
+      t2.addConstraint(new PrimaryKey("tob",v3));
     
       
       Parser p = new Parser("tpcc",schema, sql);
       // LIST TABLES INVOLVED IN THE QUERY
       System.out.println("TABLES: " + p.getTableStringList());
       System.out.println("COUNT  QUERY: " + p.getCountEquivalent());
-      System.out.println("PRIMARY KEY  QUERY: " + p.getPrimaryKeyEquivalent());
+      System.out.println("PRIMARY KEY  QUERY postJoin: " + p.getPrimaryKeyEquivalent(true));
+      System.out.println("PRIMARY KEY  QUERY preJoin: " + p.getPrimaryKeyEquivalent(false));
       
 		WhereConditionForTableVisitor v2 = new WhereConditionForTableVisitor();
 		ArrayList<BinaryExpression> exp2 = v2.getWhereForTableCondition(p.stmt,"tab", schema);
