@@ -873,11 +873,15 @@ public class Parser {
 
 		return i;
 	}
-
 	
-
-	
-	public HashMap<String,String> getPrimaryKeyEquivalent() throws Exception {
+	/**
+	 * Return an HashMap of table,query where the query would return all tuples (pk) accessed by the original query... Joins are treated optimistically if postJoin=true, i.e., we return only matching tuples in each table
+	 * if postJoin=false we return all tuples that pass the "local" predicates at each table.
+	 * @param postJoin
+	 * @return
+	 * @throws Exception
+	 */
+	public HashMap<String,String> getPrimaryKeyEquivalent(boolean postJoin) throws Exception {
 
 		HashMap<String,String> returnVal = new HashMap<String,String>();
 		 
@@ -941,37 +945,62 @@ public class Parser {
 		Expression exp = v.getWhereCondition(stmt);
 
 		
-		
-		for (Table t : tablelist) {
-			output = "SELECT ";
-			String tablename = t.getName().replaceAll("`","");
-			SchemaTable sct = schema.getTable(tablename);
-			
-			if(sct.getPrimaryKey()==null)
-				return null;
-			
-			for(String s:sct.getPrimaryKey())
-				output+= s + ",";
-			output = output.substring(0,output.length()-1);
-			output += " FROM " + t.getName();
-
-			if (exp != null) {
-				WhereConditionForTableVisitor v2 = new WhereConditionForTableVisitor();
-				ArrayList<BinaryExpression> exp2 = v2.getWhereForTableCondition(stmt,t.getName(),schema);
+		if(postJoin){
+			for(Table t:tablelist){
+				output = "SELECT ";
+				String tablename = t.getName().replaceAll("`","");
+				SchemaTable sct = schema.getTable(tablename);
 				
-				if(exp2 !=null){
-				output += " WHERE ";
-				for(BinaryExpression be:exp2)
-					output+= be.toString() + " AND ";
-				output = output.substring(0, output.length() - 5);
+				if(sct.getPrimaryKey()==null)
+					return null;
+				
+				for(String s:sct.getPrimaryKey())
+					output+= s + ",";
+				output = output.substring(0,output.length()-1);
+				
+				output += " FROM ";
+				
+				for(Table s:tablelist)
+					output+= s + ",";
+				output = output.substring(0,output.length()-1);
+				if(exp!=null){		
+					output += " WHERE " + exp;
 				}
+				returnVal.put(t.getName().replaceAll("`",""),output);
 			}
-
-			returnVal.put(t.getName().replaceAll("`",""),output);	
+		}else{	
+		
+			// PESSIMISTIC VERSION ASSUMING WE TOUCH ALL TUPLES IN A JOIN		
+			for (Table t : tablelist) {
+				output = "SELECT ";
+				String tablename = t.getName().replaceAll("`","");
+				SchemaTable sct = schema.getTable(tablename);
+				
+				if(sct.getPrimaryKey()==null)
+					return null;
+				
+				for(String s:sct.getPrimaryKey())
+					output+= s + ",";
+				output = output.substring(0,output.length()-1);
+				output += " FROM " + t.getName();
+	
+				
+				if (exp != null) {
+					WhereConditionForTableVisitor v2 = new WhereConditionForTableVisitor();
+					ArrayList<BinaryExpression> exp2 = v2.getWhereForTableCondition(stmt,t.getName(),schema);
+					
+					if(exp2 !=null){
+					output += " WHERE ";
+					for(BinaryExpression be:exp2)
+						output+= be.toString() + " AND ";
+					output = output.substring(0, output.length() - 5);
+					}
+				}
+				returnVal.put(t.getName().replaceAll("`",""),output);
+			}
+			
 		}
-		
-		
-		
+	
 		return returnVal;
 
 	}
